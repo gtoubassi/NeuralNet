@@ -1,6 +1,6 @@
 # NeuralNet
 
-This is a java implementation of the simple handwriting recognition neural net outlined in the first two chapters of http://neuralnetworksanddeeplearning.com/chap1.html
+This is a java implementation of the simple handwriting recognition neural net outlined in the first two chapters of http://neuralnetworksanddeeplearning.com/chap1.html.
 
 Derivation of the backpropagation algorithm was based on https://www.youtube.com/watch?v=aVId8KMsdUU (which has a few errors so view the actual slides at http://db.tt/yq6X4bQS)
 
@@ -13,7 +13,7 @@ Derivation of the backpropagation algorithm was based on https://www.youtube.com
 
 ### Train the neural net
 
-The train and test data sets are based on the MNIST data referenced in neuralnetworksanddeeplearning.com.  The test data is used to evaluate the quality fo the network, and is based on samples from subjects who DID NOT contribute to the training data.  After 30 iterations the accuracy should be ~95%.
+The train and test data sets are based on the MNIST data referenced in neuralnetworksanddeeplearning.com.  The test data is used to evaluate the quality of the network, and is based on samples from subjects who DID NOT contribute to the training data.  After 30 iterations the accuracy should be ~95%.
 
     % java org.toubassi.neuralnet.network.DigitTrainer ../data/train_digits.png  ../data/train_digits.txt ../data/test_digits.png ../data/test_digits.txt ../data/network
 
@@ -27,4 +27,4 @@ Write a set of digits in a single line on a white piece of paper, and take a pho
 
 This outputs 0123956787 so it misses the 4 and 9.  So 80%.  This may be based on inconsistent normalization with the training data.
 
-    % java org.toubassi.neuralnet.netwocognizer ../data/gt_sample_normalized.png ../data/network
+    % java org.toubassi.neuralnet.network.DigitRecognizer ../data/gt_sample_normalized.png ../data/network
