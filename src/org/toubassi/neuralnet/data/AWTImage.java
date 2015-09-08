@@ -13,8 +13,10 @@ public class AWTImage extends Image {
     private int yOffset;
     private int height;
     private int width;
+    private BufferedImage bufferedImage;
 
     public AWTImage(BufferedImage image, int xOffset, int yOffset, int width, int height) {
+        this.bufferedImage = image.getSubimage(xOffset, yOffset, width, height);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.height = height;
@@ -22,7 +24,7 @@ public class AWTImage extends Image {
         m = new Matrix(width * height, 1);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int rgb = image.getRGB(xOffset + x, yOffset + y);
+                int rgb = bufferedImage.getRGB(x, y);
                 float r = ((rgb >> 16) & 0xff) / 255f;
                 float g = ((rgb >> 8) & 0xff) / 255f;
                 float b = (rgb & 0xff) / 255f;
@@ -30,6 +32,10 @@ public class AWTImage extends Image {
                 m.set(y * height + x, 0, gray);
             }
         }
+    }
+
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
     }
 
     @Override

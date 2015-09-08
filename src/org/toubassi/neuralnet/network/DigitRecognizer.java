@@ -30,10 +30,19 @@ public class DigitRecognizer {
                 image.print(System.out);
             }
             Matrix output = network.evaluate(image.getMatrix());
-            System.out.print(Digit.convertOutputToDigit(output));
+            Digit.DigitScore[] scores = Digit.getDigitsOrderedByScore(output);
+
+            System.out.println(scores[0].digit + " (" + scores[0].score + ")  "
+                    + "[ Others "
+                    + scores[1].digit + " (" + scores[1].score + ")  "
+                    + scores[2].digit + " (" + scores[2].score + ") ]");
             if (verbose) {
                 System.out.println();
             }
+        }
+
+        if (!verbose) {
+            System.out.println();
         }
     }
 }

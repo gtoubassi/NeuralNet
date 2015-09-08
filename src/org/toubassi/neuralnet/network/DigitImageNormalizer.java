@@ -29,6 +29,8 @@ import java.util.List;
  * images were centered in a 28x28 image by computing the center of mass
  * of the pixels, and translating the image so as to position this point
  * at the center of the 28x28 field."
+ *
+ * Note - this ideally would be one imagemagick script
  */
 public class DigitImageNormalizer {
 

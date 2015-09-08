@@ -1,0 +1,6 @@
+These images were generated with HiddenLayerWireTapper.java.
+For hidden_layer_N.png, the image contains the top 900 inputs
+that hidden layer node N fired strongest for.  So by looking
+at them you can (try) to develop an intuition for what "feature"
+each hidden node is detecting.  Many of the mosaics look
+random but a few have very strong patterns (e.g. 11 and 16)

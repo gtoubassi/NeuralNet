@@ -96,7 +96,18 @@ public class Network {
     }
 
     public Matrix evaluate(Matrix inputVector) {
+        return evaluate(inputVector, null);
+    }
+
+    public Matrix evaluate(Matrix inputVector, Matrix hiddenLayerOutputs) {
         Matrix hiddenLayerOutputVector = evaluateLayer(inputVector, hiddenLayerWeights, hiddenLayerBiasesVector);
+
+        // To support "wire tapping" the hidden layer
+        if (hiddenLayerOutputs != null) {
+            hiddenLayerOutputs.setAll(0);
+            hiddenLayerOutputs.plusInPlace(hiddenLayerOutputVector);
+        }
+
         return evaluateLayer(hiddenLayerOutputVector, outputLayerWeights, outputLayerBiasesVector);
     }
 
