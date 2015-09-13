@@ -55,8 +55,8 @@ public class Network {
         gOutputLayerWeights = new Matrix(numOutputs, gHiddenLayerBiasesVector.getRows());
         gOutputLayerBiasesVector = new Matrix(numOutputs, 1);
 
-        unitVectorOutputSize = Matrix.createConstantMatrix(numOutputs, 1, 1f);
-        unitVectorHiddenLayerSize = Matrix.createConstantMatrix(numHiddenNodes, 1, 1f);
+        unitVectorOutputSize = new Matrix(numOutputs, 1, 1f);
+        unitVectorHiddenLayerSize = new Matrix(numHiddenNodes, 1, 1f);
 
         randomize(hiddenLayerWeights);
         randomize(hiddenLayerBiasesVector);
@@ -177,8 +177,8 @@ public class Network {
         Matrix outputVector = evaluateLayer(hiddenLayerOutputVector, outputLayerWeights, outputLayerBiasesVector);
 
         Matrix deltaK = outputVector.minus(targetVector)
-                .arrayTimesInPlace(outputVector)
-                .arrayTimesInPlace(unitVectorOutputSize.minus(outputVector));
+                .hadamardTimesInPlace(outputVector)
+                .hadamardTimesInPlace(unitVectorOutputSize.minus(outputVector));
 
         Matrix dE_dThetaK = deltaK;
 
@@ -189,7 +189,7 @@ public class Network {
             }
         }
 
-        Matrix deltaJ = hiddenLayerOutputVector.arrayTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector));
+        Matrix deltaJ = hiddenLayerOutputVector.hadamardTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector));
         for (int i = 0, rowCount = deltaJ.getRows(); i < rowCount; i++) {
             float sumOfDeltaKTimesWjk = 0;
 

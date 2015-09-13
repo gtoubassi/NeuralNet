@@ -12,16 +12,17 @@ public class Matrix {
     private int rows;
     private int cols;
 
-    public static Matrix createConstantMatrix(int rows, int cols, float value) {
-        Matrix m = new Matrix(rows, cols);
-        m.setAll(value);
-        return m;
+    public Matrix(int rows, int cols) {
+        this(rows, cols, 0.0f);
     }
 
-    public Matrix(int rows, int cols) {
+    public Matrix(int rows, int cols, float defaultValue) {
         this.rows = rows;
         this.cols = cols;
         data = new float[rows * cols];
+        if (defaultValue != 0.0f) {
+            setAll(defaultValue);
+        }
     }
 
     public Matrix(float[][] data) {
@@ -95,7 +96,12 @@ public class Matrix {
         return product;
     }
 
-    public Matrix arrayTimes(Matrix m) {
+    /**
+     * Computes the "Hadamard" product, which is simply multiplying
+     * corresponding elements.  So both input matrices and the
+     * output matrix must/will be the same size.
+     */
+    public Matrix hadamardTimes(Matrix m) {
         if (getCols() != m.getCols() || getRows() != m.getRows()) {
             throw new IllegalArgumentException("Can't array multiply matrices of different dimensions (" + getRows() + "," + getCols() + ") vs (" + m.getRows() + "," + m.getCols() + ")");
         }
@@ -111,7 +117,7 @@ public class Matrix {
         return product;
     }
 
-    public Matrix arrayTimesInPlace(Matrix m) {
+    public Matrix hadamardTimesInPlace(Matrix m) {
         if (getCols() != m.getCols() || getRows() != m.getRows()) {
             throw new IllegalArgumentException("Can't array multiply matrices of different dimensions (" + getRows() + "," + getCols() + ") vs (" + m.getRows() + "," + m.getCols() + ")");
         }

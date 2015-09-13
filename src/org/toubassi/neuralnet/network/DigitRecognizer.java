@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DigitRecognizer {
 
-    private static boolean verbose = false;
+    private static boolean verbose = true;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(args[1])));
