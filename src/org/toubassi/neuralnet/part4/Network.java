@@ -170,22 +170,16 @@ public class Network {
             network.trainOneEpoch(trainingData, 10, 3f);
 
             int numCorrect = 0;
-            int histogram[] = new int[10];
             for (int i = 0; i < testDigits.size(); i++) {
                 Digit digit = testDigits.get(i);
                 Matrix output = network.evaluate(digit.getMatrix());
                 int recognized = Digit.convertOutputToDigit(output);
-                histogram[recognized]++;
 
                 if (recognized == digit.getDigit()) {
                     numCorrect++;
                 }
             }
 
-            for (int j = 0; j < 10; j++) {
-                System.out.print(histogram[j] + ",");
-            }
-            System.out.println();
             System.out.println(numCorrect + " / " + testDigits.size() + "  (" + (numCorrect / ((float) testDigits.size())) + ")");
         }
     }

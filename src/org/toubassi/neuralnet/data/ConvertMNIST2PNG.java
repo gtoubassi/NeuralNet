@@ -9,19 +9,25 @@ import java.util.List;
 
 /**
  */
-public class Convert {
+public class ConvertMNIST2PNG {
 
     public static void main(String[] args) throws IOException {
-        List<Digit> digits = MNISTDigitLoader.load(args[2], args[3]);
+        List<Digit> digits = MNISTDigitLoader.load(args[0], args[1]);
         // We lose a few here.
-        int imagesPerSide = (int)Math.sqrt(digits.size());
+        int imageRows = (int)Math.sqrt(digits.size());
 
-        BufferedImage image = new BufferedImage(28 * imagesPerSide, 28 * imagesPerSide, BufferedImage.TYPE_3BYTE_BGR);
+        while (digits.size() % imageRows != 0) {
+            imageRows--;
+        }
+
+        int imageCols = digits.size() / imageRows;
+
+        BufferedImage image = new BufferedImage(28 * imageCols, 28 * imageRows, BufferedImage.TYPE_3BYTE_BGR);
         FileWriter writer = new FileWriter("/tmp/digits.txt");
 
-        for (int row = 0; row < imagesPerSide; row++) {
-            for (int col = 0; col < imagesPerSide; col++) {
-                Digit digit = digits.get(row * imagesPerSide + col);
+        for (int row = 0; row < imageRows; row++) {
+            for (int col = 0; col < imageCols; col++) {
+                Digit digit = digits.get(row * imageCols + col);
                 Image digitImage = digit.getImage();
                 for (int x = 0; x < 28; x++) {
                     for (int y = 0; y < 28; y++) {
