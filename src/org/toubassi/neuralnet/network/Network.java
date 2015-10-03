@@ -176,110 +176,18 @@ public class Network {
         Matrix hiddenLayerOutputVector = evaluateLayer(inputVector, hiddenLayerWeights, hiddenLayerBiasesVector);
         Matrix outputVector = evaluateLayer(hiddenLayerOutputVector, outputLayerWeights, outputLayerBiasesVector);
 
-        Matrix deltaK = outputVector.minus(targetVector)
-                .hadamardTimesInPlace(outputVector)
-                .hadamardTimesInPlace(unitVectorOutputSize.minus(outputVector));
+        Matrix dE_db2 = outputVector.minus(targetVector).hadamardTimesInPlace(outputVector).hadamardTimesInPlace(unitVectorOutputSize.minus(outputVector));
 
-        Matrix dE_dThetaK = deltaK;
+        Matrix dE_dw2 = dE_db2.times(hiddenLayerOutputVector.transpose());
 
-        Matrix dE_dWjk = new Matrix(deltaK.getRows(), hiddenLayerOutputVector.getRows());
-        for (int i = 0, rowCount = dE_dWjk.getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = dE_dWjk.getCols(); j < colCount; j++) {
-                dE_dWjk.set(i, j, hiddenLayerOutputVector.get(j, 0) * deltaK.get(i, 0));
-            }
-        }
+        Matrix dE_db1 = hiddenLayerOutputVector.hadamardTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector)).hadamardTimesInPlace(outputLayerWeights.transpose().times(dE_db2));
 
-        Matrix deltaJ = hiddenLayerOutputVector.hadamardTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector));
-        for (int i = 0, rowCount = deltaJ.getRows(); i < rowCount; i++) {
-            float sumOfDeltaKTimesWjk = 0;
+        Matrix dE_dw1 = dE_db1.times(inputVector.transpose());
 
-            for (int k = 0, kCount = outputVector.getRows(); k < kCount; k++) {
-                sumOfDeltaKTimesWjk += deltaK.get(k, 0) * outputLayerWeights.get(k, i);
-            }
-
-            deltaJ.set(i, 0, deltaJ.get(i, 0) * sumOfDeltaKTimesWjk);
-        }
-
-        Matrix dE_dThetaJ = deltaJ;
-
-        Matrix dE_dWij = new Matrix(deltaJ.getRows(), inputVector.getRows());
-        for (int i = 0, rowCount = dE_dWij.getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = dE_dWij.getCols(); j < colCount; j++) {
-                dE_dWij.set(i, j, inputVector.get(j, 0) * deltaJ.get(i, 0));
-            }
-        }
-
-        gHiddenLayerWeights.plusInPlace(dE_dWij);
-        gHiddenLayerBiasesVector.plusInPlace(dE_dThetaJ);
-        gOutputLayerWeights.plusInPlace(dE_dWjk);
-        gOutputLayerBiasesVector.plusInPlace(dE_dThetaK);
-    }
-
-    private void trainNumerically(Matrix inputVector, Matrix targetVector) {
-        Matrix outputVector = evaluate(inputVector);
-        float baseLineError = computeError(outputVector, targetVector);
-
-        float deltaX = .005f;
-
-        for (int i = 0, rowCount = outputLayerBiasesVector.getRows(); i < rowCount; i++) {
-            float oldValue = outputLayerBiasesVector.get(i, 0);
-
-            outputLayerBiasesVector.set(i, 0, deltaX + oldValue);
-
-            float error = computeError(evaluate(inputVector), targetVector);
-
-            float gradient = (error - baseLineError) / deltaX;
-
-            float g = gOutputLayerBiasesVector.get(i, 0);
-            gOutputLayerBiasesVector.set(i, 0, g + gradient);
-
-            outputLayerBiasesVector.set(i, 0, oldValue);
-        }
-
-        for (int i = 0, rowCount = hiddenLayerBiasesVector.getRows(); i < rowCount; i++) {
-            float oldValue = hiddenLayerBiasesVector.get(i, 0);
-
-            hiddenLayerBiasesVector.set(i, 0, deltaX + oldValue);
-
-            float error = computeError(evaluate(inputVector), targetVector);
-
-            float gradient = (error - baseLineError) / deltaX;
-
-            float g = gHiddenLayerBiasesVector.get(i, 0);
-            gHiddenLayerBiasesVector.set(i, 0, g + gradient);
-
-            hiddenLayerBiasesVector.set(i, 0, oldValue);
-        }
-
-        for (int i = 0, rowCount = outputLayerWeights.getRows(); i < rowCount; i++) {
-            float oldValue = outputLayerWeights.get(i, 0);
-
-            outputLayerWeights.set(i, 0, deltaX + oldValue);
-
-            float error = computeError(evaluate(inputVector), targetVector);
-
-            float gradient = (error - baseLineError) / deltaX;
-
-            float g = gOutputLayerWeights.get(i, 0);
-            gOutputLayerWeights.set(i, 0, g + gradient);
-
-            outputLayerWeights.set(i, 0, oldValue);
-        }
-
-        for (int i = 0, rowCount = hiddenLayerWeights.getRows(); i < rowCount; i++) {
-            float oldValue = hiddenLayerWeights.get(i, 0);
-
-            hiddenLayerWeights.set(i, 0, deltaX + oldValue);
-
-            float error = computeError(evaluate(inputVector), targetVector);
-
-            float gradient = (error - baseLineError) / deltaX;
-
-            float g = gHiddenLayerWeights.get(i, 0);
-            gHiddenLayerWeights.set(i, 0, g + gradient);
-
-            hiddenLayerWeights.set(i, 0, oldValue);
-        }
+        gHiddenLayerWeights.plusInPlace(dE_dw1);
+        gHiddenLayerBiasesVector.plusInPlace(dE_db1);
+        gOutputLayerWeights.plusInPlace(dE_dw2);
+        gOutputLayerBiasesVector.plusInPlace(dE_db2);
     }
 
     private float computeError(Matrix outputVector, Matrix targetVector) {

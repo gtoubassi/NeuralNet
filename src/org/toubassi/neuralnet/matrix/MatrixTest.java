@@ -120,4 +120,26 @@ public class MatrixTest {
         assertEquals(0f, m.sum(), .00001);
     }
 
+    @Test
+    public void testMatrixTranspose() {
+        float data[][] = {{1, -2}, {0, 3}};
+        float transposedData[][] = {{1, 0}, {-2, 3}};
+        Matrix m = new Matrix(data);
+        Matrix transposedM = new Matrix(transposedData);
+
+        assertTrue(m.transpose().equals(transposedM));
+        assertTrue(m.transpose().transpose().equals(m));
+    }
+
+    @Test
+    public void testVectorTranspose() {
+        float data[][] = {{1, -2, 3}};
+        float transposedData[][] = {{1}, {-2}, {3}};;
+        Matrix m = new Matrix(data);
+        Matrix transposedM = new Matrix(transposedData);
+
+        assertTrue(m.transpose().equals(transposedM));
+        assertTrue(m.transpose().transpose().equals(m));
+    }
+
 }

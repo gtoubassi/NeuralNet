@@ -1,6 +1,6 @@
 package org.toubassi.neuralnet.part2;
 
-import org.toubassi.neuralnet.part1.Matrix;
+import org.toubassi.neuralnet.matrix.Matrix;
 import org.toubassi.neuralnet.part1.Digit;
 
 import java.io.IOException;
@@ -25,6 +25,10 @@ public class Network {
         outputLayerWeights = new Matrix(10, 30);
         outputLayerBiases = new Matrix(10, 1);
 
+        initMatrix(hiddenLayerWeights);
+        initMatrix(hiddenLayerBiases);
+        initMatrix(outputLayerWeights);
+        initMatrix(outputLayerBiases);
     }
 
     private void initMatrix(Matrix m) {
@@ -59,8 +63,6 @@ public class Network {
     public static void main(String[] args) throws IOException {
         List<Digit> trainingDigits = Digit.load(args[0], args[1]);
         System.out.println("Training data set size: " + trainingDigits.size());
-        List<Digit> testDigits = Digit.load(args[2], args[3]);
-        System.out.println("Test data set size: " + testDigits.size());
 
         Network network = new Network();
 

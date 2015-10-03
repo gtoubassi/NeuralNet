@@ -1,4 +1,4 @@
-package org.toubassi.neuralnet.part1;
+package org.toubassi.neuralnet.part3;
 
 import org.toubassi.neuralnet.matrix.Matrix;
 
@@ -23,6 +23,12 @@ public class Digit {
 
     public Matrix getMatrix() {
         return matrix;
+    }
+
+    public Matrix getOutputMatrix() {
+        Matrix m = new Matrix(10, 1);
+        m.set(digit, 0, 1.0f);
+        return m;
     }
 
     public int getDigit() {

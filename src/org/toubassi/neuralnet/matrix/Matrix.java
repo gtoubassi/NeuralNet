@@ -54,8 +54,12 @@ public class Matrix {
 
     public Matrix clone() {
         Matrix m = new Matrix(rows, cols);
-        System.arraycopy(data, 0, m.data, 0, data.length);
+        m.setFrom(this);
         return m;
+    }
+
+    public void setFrom(Matrix m) {
+        System.arraycopy(m.data, 0, data, 0, data.length);
     }
 
     public float get(int iRow, int jCol) {
@@ -177,6 +181,20 @@ public class Matrix {
         return sum;
     }
 
+    public Matrix minusInPlace(Matrix m) {
+        if (getCols() != m.getCols() || getRows() != m.getRows()) {
+            throw new IllegalArgumentException("Can't subtract matrices of different dimensions (" + getCols() + "," + getRows() + " vs " + m.getCols() + "," + m.getRows() + ")");
+        }
+
+        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
+            for (int j = 0, colCount = getCols(); j < colCount; j++) {
+                set(i, j, get(i, j) - m.get(i, j));
+            }
+        }
+
+        return this;
+    }
+
     public Matrix scalarTimes(float c) {
         Matrix product = new Matrix(getRows(), getCols());
 
@@ -229,6 +247,17 @@ public class Matrix {
                 set(i, j, value);
             }
         }
+    }
+
+    public Matrix transpose() {
+        Matrix m = new Matrix(getCols(), getRows());
+
+        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
+            for (int j = 0, colCount = getCols(); j < colCount; j++) {
+                m.set(j, i, get(i, j));
+            }
+        }
+        return m;
     }
 
     @Override
