@@ -81,10 +81,10 @@ public class Network {
                              Matrix input,
                              Matrix output) {
 
-        hiddenLayerWeightsGradient.setAll(.000001f);
-        hiddenLayerBiasesGradient.setAll(.000001f);
-        outputLayerWeightsGradient.setAll(.000001f);
-        outputLayerBiasesGradient.setAll(.000001f);
+        hiddenLayerWeightsGradient.setAll(1e-6f);
+        hiddenLayerBiasesGradient.setAll(1e-6f);
+        outputLayerWeightsGradient.setAll(1e-6f);
+        outputLayerBiasesGradient.setAll(1e-6f);
     }
 
 
