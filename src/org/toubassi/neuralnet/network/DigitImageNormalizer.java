@@ -98,21 +98,20 @@ public class DigitImageNormalizer {
             process.waitFor();
 
             BufferedImage image20x20 = ImageIO.read(new File("/tmp/out2.png"));
-            float centroidX = 0, centroidY = 0;
-            int count = 0;
+            float centroidX = 0, centroidY = 0, sum = 0;
             for (int i = 0; i < image20x20.getWidth(); i++) {
                 for (int j = 0; j < image20x20.getHeight(); j++) {
                     int rgb = image20x20.getRGB(i, j);
                     if (rgb != 0xffffff) {
-                        centroidX += i;
-                        centroidY += j;
-                        count++;
+                        centroidX += i * (255-(rgb & 0xff))/255f;
+                        centroidY += j * (255-(rgb & 0xff))/255f;
+                        sum += (255-(rgb & 0xff))/255f;
                     }
                 }
             }
 
-            centroidX /= count;
-            centroidY /= count;
+            centroidX /= sum;
+            centroidY /= sum;
 
             // Create a white 28x28 image
             BufferedImage image28x28 = new BufferedImage(28, 28, BufferedImage.TYPE_3BYTE_BGR);
@@ -132,7 +131,7 @@ public class DigitImageNormalizer {
     }
 
     public static void main(String args[]) throws IOException, InterruptedException {
-        Process process = Runtime.getRuntime().exec("convert " + args[0] + " -level 80%,80% /tmp/foo.png");
+        Process process = Runtime.getRuntime().exec("convert " + args[0] + " -colorspace gray -level 80%,80% /tmp/foo.png");
         process.waitFor();
 
         BufferedImage masterImage = ImageIO.read(new File("/tmp/foo.png"));

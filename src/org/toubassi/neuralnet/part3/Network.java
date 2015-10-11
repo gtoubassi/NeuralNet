@@ -23,7 +23,7 @@ public class Network {
         }
     }
 
-    private Random random = new Random(12345L);
+    private static Random random = new Random(12345L);
 
     private Matrix hiddenLayerWeights;
     private Matrix hiddenLayerBiases;

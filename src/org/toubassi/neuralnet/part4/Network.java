@@ -24,7 +24,7 @@ public class Network {
         }
     }
 
-    private Random random = new Random(12345L);
+    private static Random random = new Random(12345L);
 
     private Matrix hiddenLayerWeights;
     private Matrix hiddenLayerBiases;
@@ -49,6 +49,15 @@ public class Network {
                 m.set(i, j, (float)random.nextGaussian());
             }
         }
+    }
+
+    public Network clone() {
+        Network n = new Network();
+        n.hiddenLayerWeights = hiddenLayerWeights.clone();
+        n.hiddenLayerBiases = hiddenLayerBiases.clone();
+        n.outputLayerWeights = outputLayerWeights.clone();
+        n.outputLayerBiases = outputLayerBiases.clone();
+        return n;
     }
 
     public Matrix evaluate(Matrix input) {
@@ -151,13 +160,21 @@ public class Network {
         }
     }
 
+
+    public float distance(Network n) {
+        float sum = outputLayerBiases.minus(n.outputLayerBiases).arrayPow(2.0f).sum() +
+                outputLayerWeights.minus(n.outputLayerWeights).arrayPow(2.0f).sum() +
+                hiddenLayerBiases.minus(n.hiddenLayerBiases).arrayPow(2.0f).sum() +
+                hiddenLayerWeights.minus(n.hiddenLayerWeights).arrayPow(2.0f).sum();
+
+        return (float)Math.sqrt(sum);
+    }
+
     public static void main(String[] args) throws IOException {
         List<Digit> trainingDigits = Digit.load(args[0], args[1]);
         System.out.println("Training data set size: " + trainingDigits.size());
         List<Digit> testDigits = Digit.load(args[2], args[3]);
         System.out.println("Test data set size: " + testDigits.size());
-
-        Network network = new Network();
 
         List<TrainingPair> trainingData = new ArrayList<>();
 
@@ -165,22 +182,45 @@ public class Network {
             trainingData.add(new TrainingPair(digit.getMatrix(), digit.getOutputMatrix()));
         }
 
-        for (int epoch = 0; epoch < 30; epoch++) {
-            System.out.print("Epoch " + (epoch + 1) + "... ");
-            network.trainOneEpoch(trainingData, 10, 3f);
+        List<Network> networks = new ArrayList<>();
 
-            int numCorrect = 0;
-            for (int i = 0; i < testDigits.size(); i++) {
-                Digit digit = testDigits.get(i);
-                Matrix output = network.evaluate(digit.getMatrix());
-                int recognized = Digit.convertOutputToDigit(output);
+        for (int k = 0; k < 1; k++) {
 
-                if (recognized == digit.getDigit()) {
-                    numCorrect++;
+            Network network = new Network();
+
+            Network last;
+
+            for (int epoch = 0; epoch < 30; epoch++) {
+                System.out.print("Epoch " + (epoch + 1) + "... ");
+                last = network.clone();
+                network.trainOneEpoch(trainingData, 10, 3f);
+                System.out.println("Distance from last: " + network.distance(last));
+
+                int numCorrect = 0;
+                for (int i = 0; i < testDigits.size(); i++) {
+                    Digit digit = testDigits.get(i);
+                    Matrix output = network.evaluate(digit.getMatrix());
+                    int recognized = Digit.convertOutputToDigit(output);
+
+                    if (recognized == digit.getDigit()) {
+                        numCorrect++;
+                    }
                 }
+
+                System.out.println(numCorrect + " / " + testDigits.size() + "  (" + (numCorrect / ((float) testDigits.size())) + ")");
             }
 
-            System.out.println(numCorrect + " / " + testDigits.size() + "  (" + (numCorrect / ((float) testDigits.size())) + ")");
+            networks.add(network);
+
+            if (networks.size() > 1) {
+                System.out.println("Distance matrix:");
+                for (Network n1 : networks) {
+                    for (Network n2 : networks) {
+                        System.out.print(n1.distance(n2) + ", ");
+                    }
+                    System.out.println();
+                }
+            }
         }
     }
 }
