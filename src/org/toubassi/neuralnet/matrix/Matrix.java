@@ -5,7 +5,21 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
+ * A simple float based Matrix class which offers a mildly fluent
+ * immutable and in place api.
+ *
+ * <pre>
+ *
+ * Matrix m = new Matrix(3, 3); // 3x3 matrix
+ * Matrix v = new Matrix(3, 1); // 3x1 column vector
+ * Matrix b = new Matrix(3, 1); // another 3x1 column vector
+ *
+ * Matrix mv = m.times(v); // m, v are unmodified
+ * mv.plusInPlace(b); // mv=mv+b (mv is overwritten)
+ *
+ * </pre>
  */
+
 public class Matrix {
 
     private float[] data;
