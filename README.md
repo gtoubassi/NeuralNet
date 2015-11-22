@@ -25,6 +25,6 @@ Write a set of digits in a single line on a white piece of paper, and take a pho
 
 ### Recognize the Sample
 
-This outputs 0123956787 so it misses the 4 and 9.  So 80%.  This may be based on inconsistent normalization with the training data.
+This outputs 0123956789 so it misses the 4 (90%).
 
     % java org.toubassi.neuralnet.network.DigitRecognizer ../data/gt_sample_normalized.png ../data/network
