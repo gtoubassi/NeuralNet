@@ -41,12 +41,6 @@ public class BitmapDigitLoader {
                 }
                 digits.add(new Digit(image, digit));
             }
-            if (reader != null) {
-                int ch = reader.read();
-                if (ch != '\n') {
-                    throw new IOException("Unexpected character '" + ch + "' when expecting \\n");
-                }
-            }
         }
 
         if (reader != null) {

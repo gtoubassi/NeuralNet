@@ -3,10 +3,13 @@ package org.toubassi.neuralnet.matrix;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * A simple float based Matrix class which offers a mildly fluent
- * immutable and in place api.
+ * immutable api.
  *
  * <pre>
  *
@@ -14,8 +17,7 @@ import java.io.IOException;
  * Matrix v = new Matrix(3, 1); // 3x1 column vector
  * Matrix b = new Matrix(3, 1); // another 3x1 column vector
  *
- * Matrix mv = m.times(v); // m, v are unmodified
- * mv.plusInPlace(b); // mv=mv+b (mv is overwritten)
+ * Matrix mv = m.times(v).plus(b); // m, v are unmodified
  *
  * </pre>
  */
@@ -135,20 +137,6 @@ public class Matrix {
         return product;
     }
 
-    public Matrix hadamardTimesInPlace(Matrix m) {
-        if (getCols() != m.getCols() || getRows() != m.getRows()) {
-            throw new IllegalArgumentException("Can't array multiply matrices of different dimensions (" + getRows() + "," + getCols() + ") vs (" + m.getRows() + "," + m.getCols() + ")");
-        }
-
-        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = getCols(); j < colCount; j++) {
-                set(i, j, get(i, j) * m.get(i, j));
-            }
-        }
-
-        return this;
-    }
-
     public Matrix plus(Matrix m) {
         if (getCols() != m.getCols() || getRows() != m.getRows()) {
             throw new IllegalArgumentException("Can't add matrices of different dimensions (" + getRows() + "," + getCols() + ") vs (" + m.getRows() + "," + m.getCols() + ")");
@@ -163,20 +151,6 @@ public class Matrix {
         }
 
         return sum;
-    }
-
-    public Matrix plusInPlace(Matrix m) {
-        if (getCols() != m.getCols() || getRows() != m.getRows()) {
-            throw new IllegalArgumentException("Can't add matrices of different dimensions (" + getRows() + "," + getCols() + ") vs (" + m.getRows() + "," + m.getCols() + ")");
-        }
-
-        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = getCols(); j < colCount; j++) {
-                set(i, j, get(i, j) + m.get(i, j));
-            }
-        }
-
-        return this;
     }
 
     public Matrix minus(Matrix m) {
@@ -195,20 +169,6 @@ public class Matrix {
         return sum;
     }
 
-    public Matrix minusInPlace(Matrix m) {
-        if (getCols() != m.getCols() || getRows() != m.getRows()) {
-            throw new IllegalArgumentException("Can't subtract matrices of different dimensions (" + getCols() + "," + getRows() + " vs " + m.getCols() + "," + m.getRows() + ")");
-        }
-
-        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = getCols(); j < colCount; j++) {
-                set(i, j, get(i, j) - m.get(i, j));
-            }
-        }
-
-        return this;
-    }
-
     public Matrix scalarTimes(float c) {
         Matrix product = new Matrix(getRows(), getCols());
 
@@ -219,16 +179,6 @@ public class Matrix {
         }
 
         return product;
-    }
-
-    public Matrix scalarTimesInPlace(float c) {
-        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
-            for (int j = 0, colCount = getCols(); j < colCount; j++) {
-                set(i, j, get(i, j) * c);
-            }
-        }
-
-        return this;
     }
 
     public Matrix arrayPow(float exponent) {
@@ -297,5 +247,19 @@ public class Matrix {
 
     public float rmsError(Matrix m) {
         return (float)Math.sqrt(this.minus(m).arrayPow(2.0f).sum() / getRows());
+    }
+
+    // Can I make this thing static?  I assume so?
+    private static NumberFormat format = new DecimalFormat("#.#####;-#.#####");
+
+    public void print(PrintStream out) {
+        for (int i = 0, rowCount = getRows(); i < rowCount; i++) {
+            out.print("[ ");
+            for (int j = 0, colCount = getCols(); j < colCount; j++) {
+                out.print(format.format(get(i, j)));
+                out.print(' ');
+            }
+            out.println("]");
+        }
     }
 }

@@ -45,19 +45,21 @@ public class Network {
     }
 
     private Matrix evaluateLayer(Matrix input, Matrix weights, Matrix biases) {
-        Matrix m = weights.times(input).plus(biases);
-        sigmoidInPlace(m);
+        Matrix m = sigmoid(weights.times(input).plus(biases));
         return m;
     }
 
-    private void sigmoidInPlace(Matrix m) {
+    private Matrix sigmoid(Matrix m) {
+        Matrix s = new Matrix(m.getRows(), m.getCols());
+
         for (int i = 0; i < m.getRows(); i++) {
             for (int j = 0; j < m.getCols(); j++) {
                 float v = m.get(i, j);
                 v = 1f / (1f + (float)Math.exp(-v));
-                m.set(i, j, v);
+                s.set(i, j, v);
             }
         }
+        return s;
     }
 
     public static void main(String[] args) throws IOException {

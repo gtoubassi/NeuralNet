@@ -93,6 +93,10 @@ public class DigitImageNormalizer {
 
             BufferedImage subImage = image.getSubimage(x, y, subImageWidth, subImageHeight - y);
 
+            if (subImage.getWidth() < 7 && subImage.getHeight() < 7) {
+                continue;
+            }
+
             ImageIO.write(subImage, "png", new File("/tmp/out.png"));
             Process process = Runtime.getRuntime().exec("convert /tmp/out.png -resize 20x20 /tmp/out2.png");
             process.waitFor();
@@ -131,7 +135,7 @@ public class DigitImageNormalizer {
     }
 
     public static void main(String args[]) throws IOException, InterruptedException {
-        Process process = Runtime.getRuntime().exec("convert " + args[0] + " -colorspace gray -level 80%,80% /tmp/foo.png");
+        Process process = Runtime.getRuntime().exec("convert " + args[0] + " -colorspace gray -level 45%,45% /tmp/foo.png");
         process.waitFor();
 
         BufferedImage masterImage = ImageIO.read(new File("/tmp/foo.png"));

@@ -66,9 +66,6 @@ public class Digit {
                 digit = digit - '0';
                 digits.add(new Digit(matrix, digit));
             }
-            if (reader.read() != '\n') {
-                throw new IllegalArgumentException("Expected \\n at end of line");
-            }
         }
 
         reader.close();

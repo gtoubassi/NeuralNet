@@ -49,7 +49,7 @@ public class DigitTrainer {
         Network network = new Network(28 * 28, 30, 10);
         evalDigits(network, testDigits);
 
-        int numEpochs = 30;
+        int numEpochs = 20;
         for (int i = 0; i < numEpochs; i++) {
             System.out.print("Training (iteration " + (i + 1) + " of " + (numEpochs) + ") ... ");
             network.train(dataset, 10, 3f);

@@ -104,8 +104,7 @@ public class Network {
 
         // To support "wire tapping" the hidden layer
         if (hiddenLayerOutputs != null) {
-            hiddenLayerOutputs.setAll(0);
-            hiddenLayerOutputs.plusInPlace(hiddenLayerOutputVector);
+            hiddenLayerOutputs.setFrom(hiddenLayerOutputVector);
         }
 
         return evaluateLayer(hiddenLayerOutputVector, outputLayerWeights, outputLayerBiasesVector);
@@ -160,10 +159,10 @@ public class Network {
 
         float factor = - learningRate / data.size();
 
-        hiddenLayerWeights.plusInPlace(gHiddenLayerWeights.scalarTimesInPlace(factor));
-        hiddenLayerBiasesVector.plusInPlace(gHiddenLayerBiasesVector.scalarTimesInPlace(factor));
-        outputLayerWeights.plusInPlace(gOutputLayerWeights.scalarTimesInPlace(factor));
-        outputLayerBiasesVector.plusInPlace(gOutputLayerBiasesVector.scalarTimesInPlace(factor));
+        hiddenLayerWeights = hiddenLayerWeights.plus(gHiddenLayerWeights.scalarTimes(factor));
+        hiddenLayerBiasesVector = hiddenLayerBiasesVector.plus(gHiddenLayerBiasesVector.scalarTimes(factor));
+        outputLayerWeights = outputLayerWeights.plus(gOutputLayerWeights.scalarTimes(factor));
+        outputLayerBiasesVector = outputLayerBiasesVector.plus(gOutputLayerBiasesVector.scalarTimes(factor));
 
         resetGradient();
     }
@@ -176,18 +175,18 @@ public class Network {
         Matrix hiddenLayerOutputVector = evaluateLayer(inputVector, hiddenLayerWeights, hiddenLayerBiasesVector);
         Matrix outputVector = evaluateLayer(hiddenLayerOutputVector, outputLayerWeights, outputLayerBiasesVector);
 
-        Matrix dE_db2 = outputVector.minus(targetVector).hadamardTimesInPlace(outputVector).hadamardTimesInPlace(unitVectorOutputSize.minus(outputVector));
+        Matrix dE_db2 = outputVector.minus(targetVector).hadamardTimes(outputVector).hadamardTimes(unitVectorOutputSize.minus(outputVector));
 
         Matrix dE_dw2 = dE_db2.times(hiddenLayerOutputVector.transpose());
 
-        Matrix dE_db1 = hiddenLayerOutputVector.hadamardTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector)).hadamardTimesInPlace(outputLayerWeights.transpose().times(dE_db2));
+        Matrix dE_db1 = hiddenLayerOutputVector.hadamardTimes(unitVectorHiddenLayerSize.minus(hiddenLayerOutputVector)).hadamardTimes(outputLayerWeights.transpose().times(dE_db2));
 
         Matrix dE_dw1 = dE_db1.times(inputVector.transpose());
 
-        gHiddenLayerWeights.plusInPlace(dE_dw1);
-        gHiddenLayerBiasesVector.plusInPlace(dE_db1);
-        gOutputLayerWeights.plusInPlace(dE_dw2);
-        gOutputLayerBiasesVector.plusInPlace(dE_db2);
+        gHiddenLayerWeights = gHiddenLayerWeights.plus(dE_dw1);
+        gHiddenLayerBiasesVector = gHiddenLayerBiasesVector.plus(dE_db1);
+        gOutputLayerWeights = gOutputLayerWeights.plus(dE_dw2);
+        gOutputLayerBiasesVector = gOutputLayerBiasesVector.plus(dE_db2);
     }
 
     private float computeError(Matrix outputVector, Matrix targetVector) {

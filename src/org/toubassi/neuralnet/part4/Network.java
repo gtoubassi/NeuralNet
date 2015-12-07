@@ -66,19 +66,20 @@ public class Network {
     }
 
     private Matrix evaluateLayer(Matrix input, Matrix weights, Matrix biases) {
-        Matrix m = weights.times(input).plus(biases);
-        sigmoidInPlace(m);
-        return m;
+        return sigmoid(weights.times(input).plus(biases));
     }
 
-    private void sigmoidInPlace(Matrix m) {
+    private Matrix sigmoid(Matrix m) {
+        Matrix s = new Matrix(m.getRows(), m.getCols());
+
         for (int i = 0; i < m.getRows(); i++) {
             for (int j = 0; j < m.getCols(); j++) {
                 float v = m.get(i, j);
                 v = 1f / (1f + (float)Math.exp(-v));
-                m.set(i, j, v);
+                s.set(i, j, v);
             }
         }
+        return s;
     }
 
     private void evaluateGradient() {
@@ -97,13 +98,13 @@ public class Network {
         Matrix hiddenLayerOutput = evaluateLayer(input, hiddenLayerWeights, hiddenLayerBiases);
         Matrix output = evaluateLayer(hiddenLayerOutput, outputLayerWeights, outputLayerBiases);
 
-        Matrix dE_db2 = output.minus(targetOutput).hadamardTimesInPlace(output).hadamardTimesInPlace(UnitVector10.minus(output));
+        Matrix dE_db2 = output.minus(targetOutput).hadamardTimes(output).hadamardTimes(UnitVector10.minus(output));
         outputLayerBiasesGradient.setFrom(dE_db2);
 
         Matrix dE_dw2 = dE_db2.times(hiddenLayerOutput.transpose());
         outputLayerWeightsGradient.setFrom(dE_dw2);
 
-        Matrix dE_db1 = hiddenLayerOutput.hadamardTimes(UnitVector30.minus(hiddenLayerOutput)).hadamardTimesInPlace(outputLayerWeights.transpose().times(dE_db2));
+        Matrix dE_db1 = hiddenLayerOutput.hadamardTimes(UnitVector30.minus(hiddenLayerOutput)).hadamardTimes(outputLayerWeights.transpose().times(dE_db2));
         hiddenLayerBiasesGradient.setFrom(dE_db1);
 
         Matrix dE_dw1 = dE_db1.times(input.transpose());
@@ -142,21 +143,21 @@ public class Network {
                 evalGradient(hiddenLayerWeightsGradient, hiddenLayerBiasesGradient, outputLayerWeightsGradient,
                         outputLayerBiasesGradient, pair.input, pair.output);
 
-                hiddenLayerWeightsGradientSum.plusInPlace(hiddenLayerWeightsGradient);
-                hiddenLayerBiasesGradientSum.plusInPlace(hiddenLayerBiasesGradient);
-                outputLayerWeightsGradientSum.plusInPlace(outputLayerWeightsGradient);
-                outputLayerBiasesGradientSum.plusInPlace(outputLayerBiasesGradient);
+                hiddenLayerWeightsGradientSum = hiddenLayerWeightsGradientSum.plus(hiddenLayerWeightsGradient);
+                hiddenLayerBiasesGradientSum = hiddenLayerBiasesGradientSum.plus(hiddenLayerBiasesGradient);
+                outputLayerWeightsGradientSum = outputLayerWeightsGradientSum.plus(outputLayerWeightsGradient);
+                outputLayerBiasesGradientSum = outputLayerBiasesGradientSum.plus(outputLayerBiasesGradient);
             }
 
-            hiddenLayerWeightsGradientSum.scalarTimesInPlace(-learningRate / batch.size());
-            hiddenLayerBiasesGradientSum.scalarTimesInPlace(-learningRate / batch.size());
-            outputLayerWeightsGradientSum.scalarTimesInPlace(-learningRate / batch.size());
-            outputLayerBiasesGradientSum.scalarTimesInPlace(-learningRate / batch.size());
+            hiddenLayerWeightsGradientSum = hiddenLayerWeightsGradientSum.scalarTimes(-learningRate / batch.size());
+            hiddenLayerBiasesGradientSum = hiddenLayerBiasesGradientSum.scalarTimes(-learningRate / batch.size());
+            outputLayerWeightsGradientSum = outputLayerWeightsGradientSum.scalarTimes(-learningRate / batch.size());
+            outputLayerBiasesGradientSum = outputLayerBiasesGradientSum.scalarTimes(-learningRate / batch.size());
 
-            hiddenLayerWeights.plusInPlace(hiddenLayerWeightsGradientSum);
-            hiddenLayerBiases.plusInPlace(hiddenLayerBiasesGradientSum);
-            outputLayerWeights.plusInPlace(outputLayerWeightsGradientSum);
-            outputLayerBiases.plusInPlace(outputLayerBiasesGradientSum);
+            hiddenLayerWeights = hiddenLayerWeights.plus(hiddenLayerWeightsGradientSum);
+            hiddenLayerBiases = hiddenLayerBiases.plus(hiddenLayerBiasesGradientSum);
+            outputLayerWeights = outputLayerWeights.plus(outputLayerWeightsGradientSum);
+            outputLayerBiases = outputLayerBiases.plus(outputLayerBiasesGradientSum);
         }
     }
 
