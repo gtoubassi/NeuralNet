@@ -1,6 +1,6 @@
 # NeuralNet
 
-This is a java implementation of the simple handwriting recognition neural net outlined in the first two chapters of http://neuralnetworksanddeeplearning.com/chap1.html.
+This is a java implementation of the simple handwriting recognition neural net outlined in the first two chapters of http://neuralnetworksanddeeplearning.com/chap1.html.  It is an exceptional candidate for learning about neural networks because it is simple enough for mere mortals to actually understand and internalize deeply, but also powerful enough to solve a real problem.
 
 Derivation of the backpropagation algorithm was based on https://www.youtube.com/watch?v=aVId8KMsdUU (which has a few errors so view the actual slides at http://db.tt/yq6X4bQS)
 
