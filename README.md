@@ -25,6 +25,6 @@ Write a set of digits in a single line on a white piece of paper, and take a pho
 
 ### Recognize the Sample
 
-This outputs 0123956789 so it misses the 4 (90%), but hey thats not bad!
+This outputs 0123956789 so it misses the 4 (90%).
 
     % java org.toubassi.neuralnet.network.DigitRecognizer ../data/gt_sample_normalized.png ../data/network
