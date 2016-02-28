@@ -64,6 +64,18 @@ public class Network {
         randomize(outputLayerBiasesVector);
     }
 
+    public int getNumInputs() {
+        return hiddenLayerWeights.getCols();
+    }
+
+    public int getNumHiddenNodes() {
+        return outputLayerWeights.getCols();
+    }
+
+    public int getNumOutputs() {
+        return outputLayerBiasesVector.getRows();
+    }
+
     public void save(DataOutputStream out) throws IOException {
         // numInputs
         out.writeInt(hiddenLayerWeights.getCols());

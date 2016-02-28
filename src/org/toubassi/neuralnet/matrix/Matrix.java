@@ -246,7 +246,7 @@ public class Matrix {
     }
 
     public float rmsError(Matrix m) {
-        return (float)Math.sqrt(this.minus(m).arrayPow(2.0f).sum() / getRows());
+        return (float)Math.sqrt(this.minus(m).arrayPow(2.0f).sum());
     }
 
     // Can I make this thing static?  I assume so?

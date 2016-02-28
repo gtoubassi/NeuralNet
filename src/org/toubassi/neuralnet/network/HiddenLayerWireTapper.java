@@ -45,24 +45,24 @@ public class HiddenLayerWireTapper {
         Network network = Network.load(in);
         in.close();
 
-        List<PriorityQueue<Score>> queues = new ArrayList<>(30);
+        List<PriorityQueue<Score>> queues = new ArrayList<>();
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < network.getNumHiddenNodes(); i++) {
             queues.add(new PriorityQueue<Score>());
         }
 
-        Matrix hiddenLayerOutputs = new Matrix(30, 1);
+        Matrix hiddenLayerOutputs = new Matrix(network.getNumHiddenNodes(), 1);
 
         for (Digit digit : digits) {
             network.evaluate(digit.getInputVector(), hiddenLayerOutputs);
 
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < queues.size(); i++) {
                 Score score = new Score(digit, hiddenLayerOutputs.get(i, 0));
                 queues.get(i).add(score);
             }
         }
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < queues.size(); i++) {
             Iterator<Score> iterator = queues.get(i).iterator();
             for (int j = 0; j < 3; j++) {
                 Score s = iterator.next();
