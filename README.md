@@ -31,4 +31,4 @@ This outputs 0123956789 so it misses the 4 (90%).
 
 ### Notes
 
-Note that org.toubassi.neuralnet.part[1234] represent the development of the neural net in 4 parts, building up in stages.  For instructional purposes, each part can be considered a separate coding exercise (each one building on the previous).
+Note that `org.toubassi.neuralnet.part[1234]` represent the development of the neural net in 4 parts, building up in stages.  For instructional purposes, each part can be considered a separate coding exercise (each one building on the previous).
